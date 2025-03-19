@@ -176,19 +176,24 @@ async def write_json(page):
     user_data = await get_users(context, space_id)
     meta = await get_user_metadata(context, user_data)
 
+    users_list = []  
+
+    for user in user_data:
+        user_meta = meta.get(user["userId"], {}).get("value", {})
+
+        user_info = {
+            "name": user_meta.get("name", None),
+            "email": user_meta.get("email", None),
+            "role": user.get("role", None),
+            "created_at": user.get("firstJoinedSpaceTime", None),
+        }
+
+        users_list.append(user_info)
+
+    # Dump the entire list once
     with open("users.json", "w") as f:
-        for user in user_data:
-            user_meta = meta.get(user["userId"], {}).get("value", {})
+        json.dump(users_list, f, indent=4)
 
-            user_info = {
-                "name": user_meta.get("name", None),
-                "email": user_meta.get("email", None),
-                "role": user.get("role", None),
-                "created_at": user.get("firstJoinedSpaceTime", None),
-            }
-
-            json.dump(user_info, f, indent=4)
-            f.write("\n")
 
 
 async def invite_members(page, count=1):
