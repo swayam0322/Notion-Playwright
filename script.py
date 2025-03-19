@@ -212,23 +212,24 @@ async def invite_members(page, count=1):
         await page.get_by_text("Add members", exact=True).click()
 
         random_email = generate_random_email()
+        await asyncio.sleep(1)
         await page.get_by_placeholder("Search names or emails").fill(random_email)
         await page.keyboard.press(",")
-        
+        await page.keyboard.press("Enter") # Handle 400 popup with this
         await page.get_by_role("button", name="Send invite").click()
-        await page.wait_for_load_state("networkidle")
-        await asyncio.sleep(2)
 
 
 async def main():
     """Main entry point for the script."""
     async with async_playwright() as playwright:
-        browser = await playwright.firefox.launch(headless=False)
+        browser = await playwright.firefox.launch()
         try:
             page = await login(browser)
             if page: # only run if login was successful
-                await invite_members(page, count=2)
-                await write_json(page)
+                await asyncio.gather(
+                    invite_members(page, count=2),
+                    write_json(page)
+                )
 
         finally:
             if browser.contexts:
