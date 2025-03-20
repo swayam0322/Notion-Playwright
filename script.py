@@ -3,6 +3,7 @@ import json
 import asyncio
 import random
 import string
+import argparse
 
 from playwright.async_api import async_playwright
 
@@ -54,7 +55,7 @@ async def login(browser):
         'input[id="notion-password-input-2"]', "placeholder"
     )
 
-    code = input(f"{placeholder}")
+    code = input(f"{placeholder}: ")
     await page.fill('input[id="notion-password-input-2"]', code)
     await page.keyboard.press("Enter")
 
@@ -164,7 +165,7 @@ async def get_user_metadata(context, user_data):
         return {}
 
 
-async def write_json(page):
+async def write_json(page, filename = "users.json"):
     """
     Extract user data and write to JSON file.
 
@@ -191,8 +192,9 @@ async def write_json(page):
         users_list.append(user_info)
 
     # Dump the entire list once
-    with open("users.json", "w") as f:
+    with open(filename, "w") as f:
         json.dump(users_list, f, indent=4)
+    print(f"Generate user data to {filename}")
 
 
 
@@ -218,18 +220,23 @@ async def invite_members(page, count=1):
         await page.keyboard.press("Enter") # Handle 400 popup with this
         await page.get_by_role("button", name="Send invite").click()
 
+    print(f"Invited members to the workspace")
 
-async def main():
+async def main(args):
     """Main entry point for the script."""
     async with async_playwright() as playwright:
-        browser = await playwright.firefox.launch()
+        try:
+            browser = await playwright.chromium.launch()
+        except: 
+            os.system("playwright install")
+            browser = await playwright.chromium.launch()
         try:
             page = await login(browser)
-            if page: # only run if login was successful
-                await asyncio.gather(
-                    invite_members(page, count=2),
-                    write_json(page)
-                )
+            if page:  # only run if login was successful
+                if args.add:
+                    await invite_members(page, count=args.add)
+                if args.write:
+                    await write_json(page, filename=args.write)
 
         finally:
             if browser.contexts:
@@ -238,4 +245,12 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(description="Notion Automation Script")
+    parser.add_argument(
+        "--add", type=int, nargs="?", const=1, help="Number of members to invite to the workspace (default: 1)"
+    )
+    parser.add_argument(
+        "--write", type=str, nargs="?", const="user.json", help="Write user data to the specified JSON file (default: user.json)"
+    )
+    args = parser.parse_args()
+    asyncio.run(main(args))
