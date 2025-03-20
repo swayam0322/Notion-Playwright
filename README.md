@@ -35,21 +35,11 @@ python3 --verison
     playwright install
     ```
 
-4.  **Run the script:**
-
+4. **Run the script:**
     ```bash
-    python3 script.py (--add | --write)
+    python3 script.py (--add <count(1)> | --write <filename(users.json)> )
     ```
-
-    *Script Arguments:*
-        The script accepts two arguments:
-            - `--add`: Specifies the count of users to add. Defaults to `1`.
-            - `--write`: Specifies the filename to write the user data. Defaults to `users.json`.
-
-    ```bash
-        python3 script.py --add 5 --write custom_users.json
-    ```
-
+    The argument parameters are optional but atleast one argument needs to be provided
 ## Workflow
 
 1.  **Session Check:**
