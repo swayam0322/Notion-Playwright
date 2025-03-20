@@ -1,5 +1,11 @@
 # Notion-Playwright: User Data Extraction and Management
 
+## Requirements 
+Make sure you have python3 installed. You can check using 
+```bash
+python3 --verison
+```
+
 ## Installation
 
 1.  **Clone the repository:**
@@ -14,10 +20,19 @@
     cd Notion-Playwright
     ```
 
-3.  **Run the setup script:**
+3.  **Setup a virtual environment**
     
     ```bash
-    sh setup.sh
+    python -m venv .venv
+    #Activate virtual env 
+    source .venv/bin/activate #UNIX-like OS
+    .venv/Scripts/activate #Windows
+    ```
+4. **Intall Playwright and its browsers:**
+
+    ```bash
+    pip install pytest-playwright
+    playwright install
     ```
 
 4.  **Run the script:**
