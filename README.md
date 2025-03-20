@@ -1,22 +1,61 @@
-# Notion-Playwright
-IdenHQ-Assignment
+# Notion-Playwright: User Data Extraction and Management
 
-Workflow:
+## Installation
 
-- Authenticate
+1.  **Clone the repository:**
 
-- Get space ID from    
-```
-https://www.notion.so/api/v3/getSpaces
-```
-- Get User IDs from here
-Payload :  
-```
-https://www.notion.so/api/v3/getVisibleUsers
-```
+    ```bash
+    git clone https://github.com/your-username/Notion-Playwright.git
+    ```
 
-Payload:UserID 
-Table: Notion User
-```
-https://www.notion.so/api/v3/syncRecordValuesMain
-```
+2.  **Navigate to the project directory:**
+
+    ```bash
+    cd Notion-Playwright
+    ```
+
+3.  **Run the setup script:**
+    
+    ```bash
+    sh setup.sh
+    ```
+
+4.  **Run the script:**
+
+    ```bash
+    python3 script.py (--add | --write)
+    ```
+
+    *Script Arguments:*
+        The script accepts two arguments:
+            - `--add`: Specifies the count of users to add. Defaults to `1`.
+            - `--write`: Specifies the filename to write the user data. Defaults to `users.json`.
+
+    ```bash
+        python3 script.py --add 5 --write custom_users.json
+    ```
+
+## Workflow
+
+1.  **Session Check:**
+    * The script checks for the existence and validity of a saved session (cookies).
+2.  **Authentication (if needed):**
+    * If no valid session is found, the script prompts the user for their Notion email and password.
+    * Playwright automates the login process.
+3.  **Workspace ID Retrieval:**
+    * The script retrieves the workspace ID from the Notion API endpoint: `https://www.notion.so/api/v3/getSpaces`.
+4.  **User ID Retrieval:**
+    * The script fetches the list of user IDs from the Notion API endpoint: `https://www.notion.so/api/v3/getVisibleUsers`.
+5.  **User Metadata Retrieval:**
+    * The script retrieves detailed user metadata from the Notion API endpoint: `https://www.notion.so/api/v3/syncRecordValuesSpace`.
+6.  **Data Processing:**
+    * The retrieved JSON data is parsed and formatted into a structured format.
+7.  **Data Export:**
+    * The processed user data is written to `users.json`.
+
+
+
+## Considerations
+
+1. The assignment asked for implementing the requests through playwright so the python requests was not used else the cached cookies could be used with a requests without rendering a headless browser runtime to  improve performance.
+
